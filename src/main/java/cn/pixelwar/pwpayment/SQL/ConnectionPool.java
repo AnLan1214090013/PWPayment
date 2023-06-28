@@ -15,7 +15,7 @@ public class ConnectionPool {
     private final String URL = "jdbc:mysql://"+IP+":"+PORT+"/"+DATABASE+"?charactorEncoding=utf-8&useSSL=false";
     private final long connectionTimeout = PWPayment.config.getLong("mysql.pool.connectionTimeout");
     private final long connectionIdleTimeout = PWPayment.config.getLong("mysql.pool.connectionIdleTimeout");
-    private final long maxConnectionAmount = PWPayment.config.getLong("mysql.pool.maxConnectionAmount");
+    private final int maxConnectionAmount = PWPayment.config.getInt("mysql.pool.maxConnectionAmount");
     public ConnectionPool(){
         this.hikariDataSource = new HikariDataSource();
         this.hikariDataSource.setDriverClassName(DRIVER);
