@@ -1,6 +1,20 @@
+# 数据库默认不会使用SSL
 mysql:
-  address: pwpayment
+  address: localhost
+  database: pwpayment
   port: 3306
   username: root
   password: 12345
+  pool:
+    # 默认5s，在连接池里拿出连接超时的时间
+    connectionTimeout: 5000
+
+    # 默认10min，连接在池子中待的最大时间，如果没被用就释放掉
+    connectionIdleTimeout: 600000
+
+    # 默认30min，超过这个时间连接就会被从池子删除
+    connectionLifetime: 1800000
+
+    # 默认10个，连接池中最大连接数量
+    maxConnectionAmount: 10
 
