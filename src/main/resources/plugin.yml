@@ -3,3 +3,4 @@ version: '${project.version}'
 main: cn.pixelwar.pwpayment.PWPayment
 api-version: 1.18
 authors: [ An_Lan ]
+depend: [Skript]

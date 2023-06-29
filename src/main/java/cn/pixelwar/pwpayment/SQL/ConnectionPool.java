@@ -2,6 +2,13 @@ package cn.pixelwar.pwpayment.SQL;
 
 import cn.pixelwar.pwpayment.PWPayment;
 import com.zaxxer.hikari.HikariDataSource;
+import org.bukkit.Bukkit;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
 
 public class ConnectionPool {
 
@@ -36,4 +43,92 @@ public class ConnectionPool {
     public HikariDataSource getHikariDataSource() {
         return hikariDataSource;
     }
+
+
+
+    public void createTables(){
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try{
+            connection = getHikariDataSource().getConnection();
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `player_rank`(`uuid` VARCHAR(100) NOT NULL, `playername` VARCHAR(100) NOT NULL, `rank` VARCHAR(100) NOT NULL, PRIMARY KEY ( `uuid` ))");
+            preparedStatement.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            closeConnection(preparedStatement,connection,null);
+        }
+    }
+
+    public void addPlayerRank(UUID uuid, String playerName, String rank){
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try{
+            connection = getHikariDataSource().getConnection();
+            preparedStatement = connection.prepareStatement("REPLACE INTO player_rank (uuid, playername, rank) VALUES ('"+uuid+"', '"+playerName+"', '"+rank+"')");
+            preparedStatement.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            closeConnection(preparedStatement,connection,null);
+        }
+    }
+    public String getPlayerRank(UUID uuid, String playerName){
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try{
+            connection = getHikariDataSource().getConnection();
+            preparedStatement = connection.prepareStatement("SELECT playername,rank FROM player_rank WHERE uuid = '"+uuid+"'");
+            resultSet = preparedStatement.executeQuery();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        if (resultSet==null){
+            closeConnection(preparedStatement,connection,null);
+            return "none";
+        }
+        //判断名字是否一样
+        String name = null;
+        String rank = "none";
+        try {
+            while (resultSet.next()) {
+//                Bukkit.broadcastMessage(resultSet.getString(1));
+//                Bukkit.broadcastMessage(resultSet.getString(2));
+//                Bukkit.broadcastMessage(resultSet.getString(3));
+                name = resultSet.getString(1);
+                rank = resultSet.getString(2);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        if (!(name.equals(playerName))){
+            closeConnection(preparedStatement,connection,null);
+            return "none";
+        }
+        //返回rank
+        closeConnection(preparedStatement,connection,null);
+        return rank;
+
+    }
+
+
+    public void closeConnection(PreparedStatement preparedStatement, Connection connection, ResultSet resultSet){
+        try{
+            if(!(connection.isClosed())) {
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                connection.close();
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }catch (NullPointerException e2){
+            e2.printStackTrace();
+
+        }
+    }
+
 }
