@@ -104,6 +104,9 @@ public class ConnectionPool {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        if(name==null){
+            return "none";
+        }
         if (!(name.equals(playerName))){
             closeConnection(preparedStatement,connection,null);
             return "none";

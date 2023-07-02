@@ -2,11 +2,13 @@ package cn.pixelwar.pwpayment;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import cn.pixelwar.pwpayment.Rank.Listeners.JoinListener;
 import cn.pixelwar.pwpayment.SQL.ConnectionPool;
 import cn.pixelwar.pwpayment.SQL.Execution;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +28,7 @@ public final class PWPayment extends JavaPlugin {
         setupConfig();
         setupSK();
         checkSQL();
+        setupEvents();
     }
     public static PWPayment getInstance() {
         return instance;
@@ -75,6 +78,10 @@ public final class PWPayment extends JavaPlugin {
             Bukkit.getLogger().info("[PWPayment] 连接获取失败!");
         }
 
+    }
+
+    private void setupEvents(){
+        getServer().getPluginManager().registerEvents((Listener) new JoinListener(), (Plugin)this);
     }
 
 
