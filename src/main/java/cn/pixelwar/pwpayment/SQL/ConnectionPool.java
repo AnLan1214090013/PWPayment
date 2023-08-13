@@ -23,6 +23,7 @@ public class ConnectionPool {
     private final long connectionTimeout = PWPayment.config.getLong("mysql.pool.connectionTimeout");
     private final long connectionIdleTimeout = PWPayment.config.getLong("mysql.pool.connectionIdleTimeout");
     private final int maxConnectionAmount = PWPayment.config.getInt("mysql.pool.maxConnectionAmount");
+    private final long maxLifetime = PWPayment.config.getLong("mysql.pool.connectionLifetime");
     public ConnectionPool(){
         this.hikariDataSource = new HikariDataSource();
         this.hikariDataSource.setDriverClassName(DRIVER);
@@ -34,6 +35,8 @@ public class ConnectionPool {
         this.hikariDataSource.setIdleTimeout(connectionIdleTimeout);
         this.hikariDataSource.setMaximumPoolSize(maxConnectionAmount);
         this.hikariDataSource.setMinimumIdle(maxConnectionAmount);
+//        this.hikariDataSource.setMaxLifetime(maxLifetime);
+        this.hikariDataSource.setMaxLifetime(50000);
     }
 
 
@@ -74,6 +77,10 @@ public class ConnectionPool {
         }
     }
     public String getPlayerRank(UUID uuid, String playerName){
+//        Bukkit.broadcastMessage("getHikariDataSource().getConnectionTimeout()"+ getHikariDataSource().getConnectionTimeout());
+//        Bukkit.broadcastMessage("getHikariDataSource().getIdleTimeout()"+ getHikariDataSource().getIdleTimeout());
+//        Bukkit.broadcastMessage("getHikariDataSource().getMaximumPoolSize()"+ getHikariDataSource().getMaximumPoolSize());
+//        Bukkit.broadcastMessage("getHikariDataSource().getMaxLifetime()"+ getHikariDataSource().getMaxLifetime());
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
